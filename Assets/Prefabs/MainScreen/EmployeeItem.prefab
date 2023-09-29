@@ -163,6 +163,7 @@ GameObject:
   - component: {fileID: 3197601095455345604}
   - component: {fileID: 3197601095455345606}
   - component: {fileID: 3197601095455345607}
+  - component: {fileID: 2891107817417298374}
   m_Layer: 5
   m_Name: EmployeeItem
   m_TagString: Untagged
@@ -234,6 +235,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 2.27
+--- !u!114 &2891107817417298374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3197601095455345605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 278198ecbdc59ef43b6965c72a3ebc86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _image: {fileID: 3197601094920490479}
+  _name: {fileID: 3197601096227596780}
+  _info: {fileID: 3197601096191795335}
 --- !u!1 &3197601095540282801
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,8 +361,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 455.55734, y: -84.290085}
-  m_SizeDelta: {x: 281.0136, y: 32.4247}
+  m_AnchoredPosition: {x: 617.2566, y: -84.290085}
+  m_SizeDelta: {x: 575.0121, y: 32.4247}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3197601096191795334
 CanvasRenderer:

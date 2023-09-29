@@ -222,3 +222,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48b7bde9b0f2e9a4091800ebcc6407a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _employeeItemPrefab: {fileID: 2891107817417298374, guid: 429272594e922b042bec59639adc04b3, type: 3}
+  _itemsParent: {fileID: 1180782047176026836}
