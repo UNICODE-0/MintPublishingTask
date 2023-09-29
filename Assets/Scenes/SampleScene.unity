@@ -2932,6 +2932,7 @@ GameObject:
   - component: {fileID: 1248923427}
   - component: {fileID: 1248923426}
   - component: {fileID: 1248923425}
+  - component: {fileID: 1248923429}
   m_Layer: 5
   m_Name: MainScreen
   m_TagString: Untagged
@@ -3024,6 +3025,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1248923429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1248923424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13c61cc2ada466440ad8b21dd7d49594, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _imageFolderName: EmployeeImages
+  _imageName: img
+  _placeHolder: {fileID: 0}
 --- !u!1 &1300911043
 GameObject:
   m_ObjectHideFlags: 0
@@ -4226,6 +4242,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1248923428}
     m_Modifications:
     - target: {fileID: 1180782047176026836, guid: 185194868fd3e5f46952248e66078a49, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1180782047176026836, guid: 185194868fd3e5f46952248e66078a49, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
@@ -4688,7 +4708,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1629929664171756836, guid: 1b67f1ef437356d4ea758f1a37a73922, type: 3}
       propertyPath: m_SizeDelta.y
-      value: -610.11206
+      value: -1142.112
       objectReference: {fileID: 0}
     - target: {fileID: 2507535149210208424, guid: 1b67f1ef437356d4ea758f1a37a73922, type: 3}
       propertyPath: m_AnchorMax.y
