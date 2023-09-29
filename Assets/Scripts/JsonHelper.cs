@@ -42,6 +42,16 @@ public static class JsonHelper
             }
         } else return String.Empty;
     }
+    public static void SaveToJSON<T>(List<T> Data, string path) 
+    {
+        string content = JsonHelper.ToJson<T>(Data.ToArray());
+        WriteFile(path, content);
+    }
+    public static void SaveToJSON<T>(T Data, string path) 
+    {
+        string content = JsonUtility.ToJson(Data);
+        WriteFile(path, content);
+    }
     private static T[] FromJson<T>(string json) 
     {
         Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
@@ -53,6 +63,15 @@ public static class JsonHelper
         Wrapper<T> wrapper = new Wrapper<T>();
         wrapper.data = array;
         return JsonUtility.ToJson(wrapper, true);
+    }
+    private static void WriteFile(string path, string data, FileMode mode = FileMode.Truncate) 
+    {
+        FileStream fileStream = new FileStream(path, mode);
+
+        using(StreamWriter writer = new StreamWriter(fileStream)) 
+        {
+            writer.Write(data);
+        }
     }
 
     [Serializable]

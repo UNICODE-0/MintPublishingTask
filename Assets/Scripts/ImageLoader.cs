@@ -3,6 +3,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using System;
 
 public class ImageLoader : MonoBehaviour
 {
@@ -10,10 +11,10 @@ public class ImageLoader : MonoBehaviour
 
     [SerializeField] private string _imageFolderName = "EmployeeImages";
     [SerializeField] private string _imageName = "img";
-    [SerializeField] private Sprite _placeHolder;
-
+    
     private Sprite[] _sprites = new Sprite[IMAGE_COUNT];
     private uint _spritesCount = 0;
+    private Action<Sprite[]> _onLoadImagesAction;
     
     public static ImageLoader instance;
 
@@ -25,8 +26,10 @@ public class ImageLoader : MonoBehaviour
         if (instance == null) instance = this;
         else if(instance == this) Destroy(gameObject);
     }
-    private void Start()
+    public void LoadImages(Action<Sprite[]> OnLoadImagesAction)
     {
+        _onLoadImagesAction = OnLoadImagesAction;
+
         string directoryPath = $"{Application.dataPath}/{_imageFolderName}";
         Directory.CreateDirectory(directoryPath);
         for (int i = 0; i < IMAGE_COUNT; i++)
@@ -50,7 +53,8 @@ public class ImageLoader : MonoBehaviour
         _sprites[index] = sprite;
         _spritesCount++;
 
-        if(_spritesCount == IMAGE_COUNT && ImagesLoaded is not null) ImagesLoaded(_sprites);
+        if(_spritesCount == IMAGE_COUNT 
+        && _onLoadImagesAction is not null) _onLoadImagesAction(_sprites);
     }
     private IEnumerator DownloadImage(string url, string path, int arrayIndex) 
     {
@@ -60,7 +64,7 @@ public class ImageLoader : MonoBehaviour
         if (www.result != UnityWebRequest.Result.Success) 
         {
             Debug.Log(www.error);
-            AddSpriteToArray(_placeHolder, arrayIndex);
+            AddSpriteToArray(null, arrayIndex);
         }
         else 
         {

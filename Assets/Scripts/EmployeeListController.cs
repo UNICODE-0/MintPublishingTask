@@ -9,8 +9,15 @@ public class EmployeeListController : MonoBehaviour
 
     private List<EmployeeData> _employeeData = new List<EmployeeData>();
     private List<EmployeeListItem> _employeeListItems = new List<EmployeeListItem>();
-    private Sprite[] _employeeImages;
     private void Start() 
+    {
+        if(_employeeListItems.Count == 0)
+        {
+            DisplayEmployeeList();
+            ImageLoader.instance.LoadImages(UpdateEmployeeImages);
+        }
+    }
+    private void DisplayEmployeeList()
     {
         _employeeData = JsonHelper.ReadListFromJSON<EmployeeData>
         (Application.dataPath + "/StreamingAssets/test_task_mock_data.json");
@@ -18,24 +25,17 @@ public class EmployeeListController : MonoBehaviour
         for (int i = 0; i < _employeeLoadCount && i < _employeeData.Count; i++)
         {
             _employeeListItems.Add(Instantiate(_employeeItemPrefab, _itemsParent));
-            _employeeListItems[i].Initialize(_employeeImages[(i + 5) % 5], _employeeData[i].first_name, _employeeData[i].last_name,
+
+            _employeeListItems[i].Initialize(null, 
+            _employeeData[i].first_name, _employeeData[i].last_name,
             _employeeData[i].email, _employeeData[i].ip_address);
         }
     }
-    private void OnEnable() 
+    private void UpdateEmployeeImages(Sprite[] sprites)
     {
-        ImageLoader.ImagesLoaded += SetEmployeeImages;
-    }
-    private void OnDisable() 
-    {
-        ImageLoader.ImagesLoaded -= SetEmployeeImages;
-    }
-    private void SetEmployeeImages(Sprite[] sprites)
-    {
-        _employeeImages = sprites;
         for (int i = 0; i < _employeeListItems.Count; i++)
         {
-            _employeeListItems[i].Image.sprite = sprites[i];
+            _employeeListItems[i].Image.sprite = sprites[i % sprites.Length];
         }
     }
 }
