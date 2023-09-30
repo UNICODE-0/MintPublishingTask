@@ -4,11 +4,12 @@ using TMPro;
 using UnityEngine;
 public class EmployeeListController : MonoBehaviour
 {
-    const string EMPLOYEE_JSON_NAME = "TestEmployeeData";
+    const string EMPLOYEE_JSON_NAME = "EmployeeData";
 
     [SerializeField] private EmployeeListItem _employeeItemPrefab;
     [SerializeField] private Transform _itemsParent;
-    [SerializeField] private uint _employeeLoadCount; 
+    [SerializeField] private uint _employeeLoadCount;
+    
     private List<EmployeeData> _employeeData = new List<EmployeeData>();
     private List<EmployeeListItem> _employeeListItems = new List<EmployeeListItem>();
     private void OnEnable() 
@@ -33,7 +34,9 @@ public class EmployeeListController : MonoBehaviour
         {
             _employeeData = JsonHelper.ReadListFromJSON<EmployeeData>
             (Application.persistentDataPath + "/" + EMPLOYEE_JSON_NAME + ".json");
-        } else 
+        }
+
+        if(_employeeData.Count == 0) 
         {
             _employeeData = JsonHelper.ReadListFromJSONString<EmployeeData>
             ((Resources.Load(EMPLOYEE_JSON_NAME) as TextAsset).text);
