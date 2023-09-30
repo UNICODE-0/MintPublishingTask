@@ -1,7 +1,6 @@
 using System.Collections;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Networking;
 using System;
 
@@ -12,8 +11,8 @@ public class ImageLoader : MonoBehaviour
     [SerializeField] private string _imageFolderName = "EmployeeImages";
     [SerializeField] private string _imageName = "img";
     
-    private Sprite[] _sprites = new Sprite[IMAGE_COUNT];
     private uint _spritesCount = 0;
+    private Sprite[] _sprites = new Sprite[IMAGE_COUNT];
     private Action<Sprite[]> _onLoadImagesAction;
     
     public static ImageLoader instance;
