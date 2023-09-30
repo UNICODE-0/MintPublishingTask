@@ -19,6 +19,17 @@ public static class JsonHelper
 
         return Data;
     }
+    public static List<T> ReadListFromJSONString<T>(string jsonString) 
+    {
+        if(string.IsNullOrEmpty(jsonString) || jsonString == "{}") 
+        {
+            return new List<T>();
+        }
+
+        List<T> Data = JsonHelper.FromJson<T>(jsonString).ToList();
+
+        return Data;
+    }
     public static T ReadFromJSON<T>(string path) 
     {
         string JsonString = ReadFile(path);
