@@ -56,7 +56,8 @@ public static class JsonHelper
     public static void SaveToJSON<T>(List<T> Data, string path) 
     {
         string content = JsonHelper.ToJson<T>(Data.ToArray());
-        WriteFile(path, content);
+        File.WriteAllText(path, content);
+        //WriteFile(path, content);
     }
     public static void SaveToJSON<T>(T Data, string path) 
     {
@@ -75,14 +76,15 @@ public static class JsonHelper
         wrapper.data = array;
         return JsonUtility.ToJson(wrapper, true);
     }
-    private static void WriteFile(string path, string data, FileMode mode = FileMode.Truncate) 
+    private static void WriteFile(string path, string data, FileMode mode = FileMode.Create) 
     {
-        FileStream fileStream = new FileStream(path, mode);
-
-        using(StreamWriter writer = new StreamWriter(fileStream)) 
-        {
-            writer.Write(data);
-        }
+        Debug.Log(data);
+        File.WriteAllText(path, data);
+        // FileStream fileStream = new FileStream(path, mode, FileAccess.Write);
+        // using(StreamWriter writer = new StreamWriter(fileStream)) 
+        // {
+        //     writer.Write(data);
+        // }
     }
 
     [Serializable]

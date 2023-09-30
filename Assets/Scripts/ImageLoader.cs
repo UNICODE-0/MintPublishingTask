@@ -3,15 +3,12 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
-using TMPro;
-
 public class ImageLoader : MonoBehaviour
 {
     private const uint IMAGE_COUNT = 5;
 
     [SerializeField] private string _imageFolderName = "EmployeeImages";
     [SerializeField] private string _imageName = "img";
-    public TMP_Text t;
     
     private uint _spritesCount = 0;
     private Sprite[] _sprites = new Sprite[IMAGE_COUNT];
@@ -62,15 +59,12 @@ public class ImageLoader : MonoBehaviour
         if (www.result != UnityWebRequest.Result.Success) 
         {
             Debug.Log(www.error);
-            t.text = www.error;
             AddSpriteToArray(null, arrayIndex);
         }
         else 
         {
             Texture2D texture = ((DownloadHandlerTexture)www.downloadHandler).texture;
             File.WriteAllBytes(path, texture.EncodeToPNG());
-            Debug.Log(path);
-
             AddSpriteToArray(texture.ConvertToSprite(), arrayIndex);
         }
     }

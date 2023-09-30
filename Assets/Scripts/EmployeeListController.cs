@@ -1,13 +1,14 @@
-using System;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 public class EmployeeListController : MonoBehaviour
 {
+    const string EMPLOYEE_JSON_NAME = "TestEmployeeData";
+
     [SerializeField] private EmployeeListItem _employeeItemPrefab;
     [SerializeField] private Transform _itemsParent;
     [SerializeField] private uint _employeeLoadCount; 
-    [SerializeField] private TMP_Text T;
     private List<EmployeeData> _employeeData = new List<EmployeeData>();
     private List<EmployeeListItem> _employeeListItems = new List<EmployeeListItem>();
     private void OnEnable() 
@@ -20,16 +21,23 @@ public class EmployeeListController : MonoBehaviour
     }
     private void Start() 
     {
-        // if(_employeeListItems.Count == 0)
-        // {
+        if(_employeeListItems.Count == 0)
+        {
             DisplayEmployeeList();
             ImageLoader.instance.LoadImages(LoadEmployeeImages);
-        // }
+        }
     }
     private void DisplayEmployeeList()
     {
-        _employeeData = JsonHelper.ReadListFromJSONString<EmployeeData>
-        ((Resources.Load("test_task_mock_data") as TextAsset).text);
+        if(File.Exists(Application.persistentDataPath + "/" + EMPLOYEE_JSON_NAME + ".json"))
+        {
+            _employeeData = JsonHelper.ReadListFromJSON<EmployeeData>
+            (Application.persistentDataPath + "/" + EMPLOYEE_JSON_NAME + ".json");
+        } else 
+        {
+            _employeeData = JsonHelper.ReadListFromJSONString<EmployeeData>
+            ((Resources.Load(EMPLOYEE_JSON_NAME) as TextAsset).text);
+        }
 
         
         for (int i = 0; i < _employeeLoadCount && i < _employeeData.Count; i++)
@@ -75,10 +83,10 @@ public class EmployeeListController : MonoBehaviour
             case Screen.Favorite:
                 for (int i = 0; i < _employeeListItems.Count; i++)
                 {
-                    if(!_employeeListItems[i].IsFavorite)
-                        _employeeListItems[i].gameObject.SetActive(false);
-                    else
+                    if(_employeeListItems[i].IsFavorite)
                         _employeeListItems[i].gameObject.SetActive(true);
+                    else
+                        _employeeListItems[i].gameObject.SetActive(false);
                 }
             break;
             case Screen.Profile:
@@ -91,15 +99,18 @@ public class EmployeeListController : MonoBehaviour
     }
     private void UpdateEmployeeData()
     {
-        if(_employeeData is null || _employeeData.Count == 0) return;
-
         for (int i = 0; i < _employeeListItems.Count; i++)
         {
             _employeeData[i].isFavorite = _employeeListItems[i].IsFavorite;
         }
 
+
         JsonHelper.SaveToJSON<EmployeeData>(_employeeData, 
-        Application.streamingAssetsPath + "/test_task_mock_data.json");
+        Application.persistentDataPath + "/" + EMPLOYEE_JSON_NAME + ".json");
+    }
+    private void OnApplicationPause(bool pauseStatus) 
+    {
+        if(pauseStatus) UpdateEmployeeData();
     }
     private void OnApplicationQuit() 
     {
