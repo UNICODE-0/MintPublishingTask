@@ -9,6 +9,14 @@ public class EmployeeListController : MonoBehaviour
 
     private List<EmployeeData> _employeeData = new List<EmployeeData>();
     private List<EmployeeListItem> _employeeListItems = new List<EmployeeListItem>();
+    private void OnEnable() 
+    {
+        ScreenManager.OnScreenChange += HandleScreenChange;
+    }
+    private void OnDisable() 
+    {
+        ScreenManager.OnScreenChange -= HandleScreenChange;
+    }
     private void Start() 
     {
         if(_employeeListItems.Count == 0)
@@ -27,7 +35,7 @@ public class EmployeeListController : MonoBehaviour
             _employeeListItems.Add(Instantiate(_employeeItemPrefab, _itemsParent));
 
             _employeeListItems[i].Initialize(null, 
-            _employeeData[i].first_name, _employeeData[i].last_name,
+            _employeeData[i].first_name, _employeeData[i].last_name, _employeeData[i].gender,
             _employeeData[i].email, _employeeData[i].ip_address, _employeeData[i].isFavorite);
 
             if(i % 2 != 0) _employeeListItems[i].SwapPaddingColor();
@@ -50,6 +58,33 @@ public class EmployeeListController : MonoBehaviour
             {                  
                 _employeeListItems[i].Image.sprite = sprites[_employeeData[i].imageIndex];
             }
+        }
+    }
+    private void HandleScreenChange(Screen currentScreen)
+    {
+        switch (currentScreen)
+        {
+            case Screen.Main:
+                for (int i = 0; i < _employeeListItems.Count; i++)
+                {
+                    _employeeListItems[i].gameObject.SetActive(true);
+                }
+            break;
+            case Screen.Favorite:
+                for (int i = 0; i < _employeeListItems.Count; i++)
+                {
+                    if(!_employeeListItems[i].IsFavorite)
+                        _employeeListItems[i].gameObject.SetActive(false);
+                    else
+                        _employeeListItems[i].gameObject.SetActive(true);
+                }
+            break;
+            case Screen.Profile:
+                for (int i = 0; i < _employeeListItems.Count; i++)
+                {
+                    _employeeListItems[i].gameObject.SetActive(false);
+                }
+            break;
         }
     }
     private void UpdateEmployeeData()

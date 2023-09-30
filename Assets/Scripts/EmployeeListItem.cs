@@ -19,8 +19,13 @@ public class EmployeeListItem : MonoBehaviour
     {
         get { return _image; }
     }
+    public Sprite CurrentFavoriteIcon
+    {
+        get { return _favoriteIcon.sprite; }
+    }
     public string FirstName { get; private set; }
     public string SecondName { get; private set; }
+    public string Gender { get; private set; }
     public string Mail { get; private set; }
     public string Ip { get; private set; }
     public bool IsFavorite
@@ -38,18 +43,30 @@ public class EmployeeListItem : MonoBehaviour
             }
         }
     }
-
-    public void Initialize(Sprite image, string firstName, string secondName, string mail, string ip, bool isFavorite)
+    public void Initialize(Sprite image, string firstName, string secondName, string gender, string mail, string ip, bool isFavorite)
     {
         FirstName = firstName;
         SecondName = secondName;
+        Gender = gender;
         Mail = mail;
         Ip = ip;
         IsFavorite = isFavorite;
 
         if(image != null) _image.sprite = image;
-        _name.text = $"{firstName} {SecondName}";
-        _info.text = $"{mail} <color=#D9D9D9>|</color> {ip}";
+        _name.text = $"{FirstName} {SecondName}";
+        _info.text = $"{Mail} <color=#D9D9D9>|</color> {Ip}";
+    }
+    public void Initialize(EmployeeListItem item)
+    {
+        FirstName = item.FirstName;
+        SecondName = item.SecondName;
+        Mail = item.Mail;
+        Ip = item.Ip;
+        IsFavorite = item.IsFavorite;
+
+        if(item.Image != null) _image.sprite = item.Image.sprite;
+        _name.text = $"{FirstName} {SecondName}";
+        _info.text = $"{Mail} <color=#D9D9D9>|</color> {Ip}";
     }
     public void SwapPaddingColor()
     {
@@ -59,6 +76,10 @@ public class EmployeeListItem : MonoBehaviour
     {
         if(IsFavorite) IsFavorite = false;
         else IsFavorite = true;
+    }
+    public void OpenProfile()
+    {
+        ScreenManager.instance.OpenProfileScreen(this);
     }
 }
 
