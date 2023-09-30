@@ -1,11 +1,14 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 public class EmployeeListItem : MonoBehaviour
 {
     [SerializeField] private Image _image;
     [SerializeField] private TMP_Text _name;
     [SerializeField] private TMP_Text _info;
+    [SerializeField] private Image _padding;
+    [SerializeField] private Color _swapPaddingColor;
 
     public Image Image
     {
@@ -27,5 +30,9 @@ public class EmployeeListItem : MonoBehaviour
         if(image != null) _image.sprite = image;
         _name.text = $"{firstName} {SecondName}";
         _info.text = $"{mail} <color=#D9D9D9>|</color> {ip}";
+    }
+    public void SwapPaddingColor()
+    {
+        _padding.color = _swapPaddingColor;
     }
 }

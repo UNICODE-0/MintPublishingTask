@@ -250,6 +250,8 @@ MonoBehaviour:
   _image: {fileID: 3197601094920490479}
   _name: {fileID: 3197601096227596780}
   _info: {fileID: 3197601096191795335}
+  _padding: {fileID: 3197601095455345607}
+  _swapPaddingColor: {r: 0.9725491, g: 0.9725491, b: 0.9725491, a: 1}
 --- !u!1 &3197601095540282801
 GameObject:
   m_ObjectHideFlags: 0

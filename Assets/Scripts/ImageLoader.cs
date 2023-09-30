@@ -18,9 +18,6 @@ public class ImageLoader : MonoBehaviour
     
     public static ImageLoader instance;
 
-    public delegate void ImagesLoadedHandler(Sprite[] images);
-    public static event ImagesLoadedHandler ImagesLoaded;
-
     private void Awake() 
     {
         if (instance == null) instance = this;
