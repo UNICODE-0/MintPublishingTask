@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class ScreenManager : MonoBehaviour
@@ -10,9 +11,8 @@ public class ScreenManager : MonoBehaviour
 
     private Screen _lastScreen = Screen.Main;
     private Screen _currentScreen = Screen.Main;
-
-    public delegate void ScreenChange(Screen currentScreen);
-    public static event ScreenChange OnScreenChange;
+    
+    public static event Action<Screen> OnScreenChange;
 
     private void Awake() 
     {
@@ -28,7 +28,7 @@ public class ScreenManager : MonoBehaviour
         _favoriteScreen.SetActive(false);
         _profileScreen.gameObject.SetActive(false);
 
-        OnScreenChange(Screen.Main);
+        if(OnScreenChange is not null) OnScreenChange(Screen.Main);
     }
     public void OpenFavoriteScreen()
     {
@@ -39,7 +39,7 @@ public class ScreenManager : MonoBehaviour
         _favoriteScreen.SetActive(true);
         _profileScreen.gameObject.SetActive(false);
 
-        OnScreenChange(Screen.Favorite);
+        if(OnScreenChange is not null) OnScreenChange(Screen.Favorite);
     }
     public void OpenProfileScreen(EmployeeListItem item)
     {
@@ -51,7 +51,7 @@ public class ScreenManager : MonoBehaviour
         _profileScreen.gameObject.SetActive(true);
         _profileScreen.Initialize(item);
 
-        OnScreenChange(Screen.Profile);
+        if(OnScreenChange is not null) OnScreenChange(Screen.Profile);
     }
 
     public void ReturnFromProfile()

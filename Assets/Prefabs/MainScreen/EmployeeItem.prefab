@@ -312,6 +312,7 @@ MonoBehaviour:
   _unfavoriteSprite: {fileID: 21300000, guid: 34218ec252d99184c94d60e725c3f720, type: 3}
   _padding: {fileID: 3197601095455345607}
   _swapPaddingColor: {r: 0.9725491, g: 0.9725491, b: 0.9725491, a: 1}
+  _rectTransform: {fileID: 3197601095455345604}
 --- !u!1 &3197601095540282801
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,9 +12,15 @@ public class EmployeeListItem : MonoBehaviour
     [SerializeField] private Sprite _unfavoriteSprite;
     [SerializeField] private Image _padding;
     [SerializeField] private Color _swapPaddingColor;
+    [SerializeField] private RectTransform _rectTransform;
 
     private bool _isFavorite;
 
+    public RectTransform RectTransform
+    {
+        get { return _rectTransform; }
+    }
+    
     public Image Image
     {
         get { return _image; }
