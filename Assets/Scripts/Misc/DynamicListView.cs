@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
  
 public class DynamicListView : MonoBehaviour
@@ -11,7 +12,8 @@ public class DynamicListView : MonoBehaviour
     [SerializeField] private RectTransform _content;
     
     public event Action<int, EmployeeListItem> OnItemShowed;
- 
+    
+    private List<int> _referenceGlobalIndices;
     private int _count;
     private int _oldGlobalIndex = -1;
     private RectTransform _item;
@@ -42,15 +44,18 @@ public class DynamicListView : MonoBehaviour
                 if (localIndex < 0) localIndex = _items.Length - 1;
                 int viewIndex = currentIndex + _items.Length - 1;
 
-                if (viewIndex < _count) {
-                    
+                if (viewIndex < _count) 
+                {
                     _item = _items[localIndex].RectTransform;
 
                     Vector2 itemPos = _item.anchoredPosition;
                     itemPos.y = -(_topPadding + viewIndex * _spacing + viewIndex * _itemHeight);
                     _item.anchoredPosition = itemPos;
-    
-                    OnItemShowed(viewIndex, _items[localIndex]);
+
+                    if(_referenceGlobalIndices is null)
+                        OnItemShowed(viewIndex, _items[localIndex]);
+                    else
+                        OnItemShowed(_referenceGlobalIndices[viewIndex], _items[localIndex]);
                 }
             }
             else 
@@ -61,18 +66,22 @@ public class DynamicListView : MonoBehaviour
                 Vector2 itemPos = _item.anchoredPosition;
                 itemPos.y = -(_topPadding + currentIndex * _spacing + currentIndex * _itemHeight);
                 _item.anchoredPosition = itemPos;
-    
-                OnItemShowed(currentIndex, _items[localIndex]);
+
+                if(_referenceGlobalIndices is null)
+                    OnItemShowed(currentIndex, _items[localIndex]);
+                else
+                    OnItemShowed(_referenceGlobalIndices[currentIndex], _items[localIndex]);
             }
         }
         
         _oldGlobalIndex = globalItemIndex;
     }
  
-    public void Initialize(int count)
+    public void Initialize(int count, List<int> referenceGlobalIndices = null)
     {
         _oldGlobalIndex = 0;
         _count = count;
+        _referenceGlobalIndices = referenceGlobalIndices;
     
         float contentHeight = _itemHeight * count * 1f + _topPadding + _topBottom + (count == 0 ? 0 : ((count - 1) * _spacing));
         _content.sizeDelta = new Vector2(_content.sizeDelta.x, contentHeight);
@@ -93,9 +102,12 @@ public class DynamicListView : MonoBehaviour
                 contentPos.y = -offset;
                 _items[i].RectTransform.anchoredPosition = contentPos;
                 offset += _spacing + _itemHeight;
- 
-                OnItemShowed(i, _items[i]);
-            }
+
+                if(_referenceGlobalIndices is null)
+                    OnItemShowed(i, _items[i]);
+                else
+                    OnItemShowed(_referenceGlobalIndices[i], _items[i]);
+            } else _items[i].gameObject.SetActive(false);
         }
     }
 }

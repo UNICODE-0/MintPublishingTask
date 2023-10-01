@@ -1,13 +1,11 @@
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 public class EmployeeListController : MonoBehaviour
 {
     const string EMPLOYEE_JSON_NAME = "EmployeeData";
 
-    [SerializeField] private EmployeeListItem _employeeItemPrefab;
-    [SerializeField] private DynamicListView _dynamicListView;
-    [SerializeField] private Transform _itemsParent;
-    [SerializeField] private uint _employeeLoadCount;
+    [SerializeField] private DynamicListView _mainListView;
     
     private EmployeeData[] _employeeData;
     private EmployeeListItem[] _employeeListItems;
@@ -16,20 +14,20 @@ public class EmployeeListController : MonoBehaviour
     private void OnEnable()
     {
         ScreenManager.OnScreenChange += HandleScreenChange;
-        _dynamicListView.OnItemShowed += InitializeListItem;
+        _mainListView.OnItemShowed += InitializeListItem;
     }
 
     private void OnDisable() 
     {
         ScreenManager.OnScreenChange -= HandleScreenChange;
-        _dynamicListView.OnItemShowed -= InitializeListItem;
+        _mainListView.OnItemShowed -= InitializeListItem;
     }
     private void Start()
     {
-        _employeeListItems = _dynamicListView.Items;
+        _employeeListItems = _mainListView.Items;
 
         LoadEmployeeData();
-        _dynamicListView.Initialize(_employeeData.Length);
+        _mainListView.Initialize(_employeeData.Length);
         ImageLoader.instance.LoadImages(LoadEmployeeImages);
     }
     private void LoadEmployeeData()
@@ -40,7 +38,7 @@ public class EmployeeListController : MonoBehaviour
             (Application.persistentDataPath + "/" + EMPLOYEE_JSON_NAME + ".json");
         }
 
-        if(_employeeData is null) 
+        if(_employeeData is null || _employeeData.Length == 0) 
         {
             _employeeData = JsonHelper.ReadListFromJSONString<EmployeeData>
             ((Resources.Load(EMPLOYEE_JSON_NAME) as TextAsset).text);
@@ -73,32 +71,33 @@ public class EmployeeListController : MonoBehaviour
         switch (currentScreen)
         {
             case Screen.Main:
-                for (int i = 0; i < _employeeListItems.Length; i++)
-                {
-                    _employeeListItems[i].gameObject.SetActive(true);
-                }
+                _mainListView.gameObject.SetActive(true);
+                _mainListView.Initialize(_employeeData.Length);
             break;
             case Screen.Favorite:
-                for (int i = 0; i < _employeeListItems.Length; i++)
+                _mainListView.gameObject.SetActive(true);
+                List<int> favoriteEmployeeGlobalIndices = new List<int>();
+                for (int i = 0; i < _employeeData.Length; i++)
                 {
-                    if(_employeeListItems[i].IsFavorite)
-                        _employeeListItems[i].gameObject.SetActive(true);
-                    else
-                        _employeeListItems[i].gameObject.SetActive(false);
+                    if(_employeeData[i].isFavorite) favoriteEmployeeGlobalIndices.Add(i);
                 }
+                _mainListView.Initialize(favoriteEmployeeGlobalIndices.Count, favoriteEmployeeGlobalIndices);
             break;
             case Screen.Profile:
-                for (int i = 0; i < _employeeListItems.Length; i++)
-                {
-                    _employeeListItems[i].gameObject.SetActive(false);
-                }
+                _mainListView.gameObject.SetActive(false);
             break;
         }
     }
     private void UpdateEmployeeData()
     {
+        if(_employeeData?.Length is 0) return;
+
         JsonHelper.SaveToJSON<EmployeeData>(_employeeData, 
         Application.persistentDataPath + "/" + EMPLOYEE_JSON_NAME + ".json");
+    }
+    private void HandleOnFavoriteCallback(int index, bool status)
+    {
+        _employeeData[index].isFavorite = status;
     }
     private void InitializeListItem(int index, EmployeeListItem item)
     {
@@ -117,7 +116,7 @@ public class EmployeeListController : MonoBehaviour
             } else sprite = _employeeSprites[_employeeData[index].imageIndex];
         }
 
-        item.Initialize(data, sprite, (int index, bool status) => _employeeData[index].isFavorite = status);
+        item.Initialize(data, sprite, HandleOnFavoriteCallback);
         item.globalIndex = index;
     }
     private void OnApplicationPause(bool pauseStatus) 
