@@ -7,9 +7,8 @@ public class DynamicListView : MonoBehaviour
     [SerializeField] private int _spacing;
     [SerializeField] private int _topPadding;
     [SerializeField] private int _topBottom;
-    [SerializeField] private EmployeeListItem[] _views;
+    [SerializeField] private EmployeeListItem[] _items;
     [SerializeField] private RectTransform _content;
-    [SerializeField] private int _itemsCount;
     
     public event Action<int, EmployeeListItem> OnItemShowed;
  
@@ -17,9 +16,9 @@ public class DynamicListView : MonoBehaviour
     private int _oldGlobalIndex = -1;
     private RectTransform _item;
 
-    private void Start()
+    public EmployeeListItem[] Items
     {
-        Initialize(_itemsCount);
+        get { return _items; }
     }
     public void UpdateContnet()
     {
@@ -39,38 +38,38 @@ public class DynamicListView : MonoBehaviour
         {
             if (currentIndex > _oldGlobalIndex) 
             {
-                int localIndex = (currentIndex % _views.Length) - 1;
-                if (localIndex < 0) localIndex = _views.Length - 1;
-                int viewIndex = currentIndex + _views.Length - 1;
+                int localIndex = (currentIndex % _items.Length) - 1;
+                if (localIndex < 0) localIndex = _items.Length - 1;
+                int viewIndex = currentIndex + _items.Length - 1;
 
                 if (viewIndex < _count) {
                     
-                    _item = _views[localIndex].RectTransform;
+                    _item = _items[localIndex].RectTransform;
 
                     Vector2 itemPos = _item.anchoredPosition;
                     itemPos.y = -(_topPadding + viewIndex * _spacing + viewIndex * _itemHeight);
                     _item.anchoredPosition = itemPos;
     
-                    OnItemShowed(viewIndex, _views[localIndex]);
+                    OnItemShowed(viewIndex, _items[localIndex]);
                 }
             }
             else 
             {
-                var localIndex = currentIndex % _views.Length;
-                _item = _views[localIndex].RectTransform;
+                var localIndex = currentIndex % _items.Length;
+                _item = _items[localIndex].RectTransform;
     
                 Vector2 itemPos = _item.anchoredPosition;
                 itemPos.y = -(_topPadding + currentIndex * _spacing + currentIndex * _itemHeight);
                 _item.anchoredPosition = itemPos;
     
-                OnItemShowed(currentIndex, _views[localIndex]);
+                OnItemShowed(currentIndex, _items[localIndex]);
             }
         }
         
         _oldGlobalIndex = globalItemIndex;
     }
  
-    private void Initialize(int count)
+    public void Initialize(int count)
     {
         _oldGlobalIndex = 0;
         _count = count;
@@ -84,18 +83,18 @@ public class DynamicListView : MonoBehaviour
 
         int offset = _topPadding;
  
-        for (int i = 0; i < _views.Length; i++) 
+        for (int i = 0; i < _items.Length; i++) 
         {
             if (i < count) 
             {
-                _views[i].gameObject.SetActive(true);
+                _items[i].gameObject.SetActive(true);
 
-                contentPos = _views[i].RectTransform.anchoredPosition;
+                contentPos = _items[i].RectTransform.anchoredPosition;
                 contentPos.y = -offset;
-                _views[i].RectTransform.anchoredPosition = contentPos;
+                _items[i].RectTransform.anchoredPosition = contentPos;
                 offset += _spacing + _itemHeight;
  
-                OnItemShowed(i, _views[i]);
+                OnItemShowed(i, _items[i]);
             }
         }
     }

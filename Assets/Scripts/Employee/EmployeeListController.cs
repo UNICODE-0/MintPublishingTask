@@ -1,34 +1,44 @@
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
+using System.Linq;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 public class EmployeeListController : MonoBehaviour
 {
     const string EMPLOYEE_JSON_NAME = "EmployeeData";
 
     [SerializeField] private EmployeeListItem _employeeItemPrefab;
+    [SerializeField] private DynamicListView _dynamicListView;
     [SerializeField] private Transform _itemsParent;
     [SerializeField] private uint _employeeLoadCount;
     
-    private List<EmployeeData> _employeeData = new List<EmployeeData>();
-    private List<EmployeeListItem> _employeeListItems = new List<EmployeeListItem>();
-    private void OnEnable() 
+    private EmployeeData[] _employeeData;
+    private EmployeeListItem[] _employeeListItems;
+    private Sprite[] _employeeSprites;
+    private int[] _employeeRandomImageIndices;
+    private void OnEnable()
     {
         ScreenManager.OnScreenChange += HandleScreenChange;
+        _dynamicListView.OnItemShowed += InitializeListItem;
     }
+
     private void OnDisable() 
     {
         ScreenManager.OnScreenChange -= HandleScreenChange;
+        _dynamicListView.OnItemShowed -= InitializeListItem;
     }
-    private void Start() 
+    private void Start()
     {
-        if(_employeeListItems.Count == 0)
-        {
-            DisplayEmployeeList();
-            ImageLoader.instance.LoadImages(LoadEmployeeImages);
-        }
+        _employeeListItems = _dynamicListView.Items;
+
+        LoadEmployeeData();
+        _dynamicListView.Initialize(_employeeData.Length);
+        ImageLoader.instance.LoadImages(LoadEmployeeImages);
     }
-    private void DisplayEmployeeList()
+    private void LoadEmployeeData()
     {
         if(File.Exists(Application.persistentDataPath + "/" + EMPLOYEE_JSON_NAME + ".json"))
         {
@@ -36,40 +46,31 @@ public class EmployeeListController : MonoBehaviour
             (Application.persistentDataPath + "/" + EMPLOYEE_JSON_NAME + ".json");
         }
 
-        if(_employeeData.Count == 0) 
+        if(_employeeData is null) 
         {
             _employeeData = JsonHelper.ReadListFromJSONString<EmployeeData>
             ((Resources.Load(EMPLOYEE_JSON_NAME) as TextAsset).text);
         }
-
-        
-        for (int i = 0; i < _employeeLoadCount && i < _employeeData.Count; i++)
-        {
-            _employeeListItems.Add(Instantiate(_employeeItemPrefab, _itemsParent));
-
-            _employeeListItems[i].Initialize(null, 
-            _employeeData[i].first_name, _employeeData[i].last_name, _employeeData[i].gender,
-            _employeeData[i].email, _employeeData[i].ip_address, _employeeData[i].isFavorite);
-
-            if(i % 2 != 0) _employeeListItems[i].SwapPaddingColor();
-        }
     }
     private void LoadEmployeeImages(Sprite[] sprites)
     {
-        List<int> indexes = null;
-        for (int i = 0; i < _employeeListItems.Count; i++)
+        _employeeSprites = sprites;
+
+        for (int i = 0; i < _employeeListItems.Length; i++)
         {
             if(_employeeData[i].imageIndex == -1)
             {
-                if(indexes == null) 
-                    indexes = RandomSequenceGenerator.Generate(_employeeListItems.Count, 0, sprites.Length - 1);
+                if(_employeeRandomImageIndices is null) 
+                    _employeeRandomImageIndices = RandomSequenceGenerator.Generate(_employeeData.Length, 0, sprites.Length - 1);
 
-                _employeeListItems[i].Image.sprite = sprites[indexes[i]];
-                _employeeData[i].imageIndex = indexes[i];
+                _employeeListItems[i].Image.sprite = sprites[_employeeRandomImageIndices[i]];
+                _employeeData[i].imageIndex = _employeeRandomImageIndices[i];
             }
             else
-            {                  
-                _employeeListItems[i].Image.sprite = sprites[_employeeData[i].imageIndex];
+            {   
+                int globalIndex = _employeeListItems[i].globalIndex;     
+                int imageIndex =  _employeeData[globalIndex].imageIndex;
+                _employeeListItems[i].Image.sprite = sprites[imageIndex];
             }
         }
     }
@@ -78,13 +79,13 @@ public class EmployeeListController : MonoBehaviour
         switch (currentScreen)
         {
             case Screen.Main:
-                for (int i = 0; i < _employeeListItems.Count; i++)
+                for (int i = 0; i < _employeeListItems.Length; i++)
                 {
                     _employeeListItems[i].gameObject.SetActive(true);
                 }
             break;
             case Screen.Favorite:
-                for (int i = 0; i < _employeeListItems.Count; i++)
+                for (int i = 0; i < _employeeListItems.Length; i++)
                 {
                     if(_employeeListItems[i].IsFavorite)
                         _employeeListItems[i].gameObject.SetActive(true);
@@ -93,7 +94,7 @@ public class EmployeeListController : MonoBehaviour
                 }
             break;
             case Screen.Profile:
-                for (int i = 0; i < _employeeListItems.Count; i++)
+                for (int i = 0; i < _employeeListItems.Length; i++)
                 {
                     _employeeListItems[i].gameObject.SetActive(false);
                 }
@@ -102,14 +103,36 @@ public class EmployeeListController : MonoBehaviour
     }
     private void UpdateEmployeeData()
     {
-        for (int i = 0; i < _employeeListItems.Count; i++)
-        {
-            _employeeData[i].isFavorite = _employeeListItems[i].IsFavorite;
-        }
+        if(_employeeData is null) return;
+
+        // for (int i = 0; i < _employeeData.Length; i++)
+        // {
+        //     _employeeData[i].isFavorite = _employeeListItems[i].IsFavorite;
+        // }
 
 
         JsonHelper.SaveToJSON<EmployeeData>(_employeeData, 
         Application.persistentDataPath + "/" + EMPLOYEE_JSON_NAME + ".json");
+    }
+    private void InitializeListItem(int index, EmployeeListItem item)
+    {
+        EmployeeData data = _employeeData[index];
+        Sprite sprite = null;
+        if(_employeeSprites is not null)
+        {
+            if(_employeeData[index].imageIndex == -1)
+            {
+                if(_employeeRandomImageIndices is null) 
+                    _employeeRandomImageIndices = RandomSequenceGenerator.Generate(_employeeData.Length, 0, _employeeSprites.Length - 1);
+
+                int imageIndex = _employeeRandomImageIndices[index];
+                sprite = _employeeSprites[imageIndex];
+                _employeeData[index].imageIndex = imageIndex;
+            } else sprite = _employeeSprites[_employeeData[index].imageIndex];
+        }
+
+        item.Initialize(data, sprite);
+        item.globalIndex = index;
     }
     private void OnApplicationPause(bool pauseStatus) 
     {

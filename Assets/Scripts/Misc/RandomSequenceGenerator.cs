@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public static class RandomSequenceGenerator
 {
-    public static List<int> Generate(int length, int minValue, int maxValue)
+    public static int[] Generate(int length, int minValue, int maxValue)
     {
         List<int> sequence = new List<int>();
 
@@ -25,6 +25,6 @@ public static class RandomSequenceGenerator
             sequence.Add(randomNumber);
         }
 
-        return sequence;
+        return sequence.ToArray();
     }
 }

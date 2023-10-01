@@ -6,27 +6,27 @@ using UnityEngine;
 
 public static class JsonHelper 
 {
-    public static List<T> ReadListFromJSON<T>(string path) 
+    public static T[] ReadListFromJSON<T>(string path) 
     {
         string JsonString = ReadFile(path);
 
         if(string.IsNullOrEmpty(JsonString) || JsonString == "{}") 
         {
-            return new List<T>();
+            return new T[0];
         }
 
-        List<T> Data = JsonHelper.FromJson<T>(JsonString).ToList();
+        T[] Data = JsonHelper.FromJson<T>(JsonString);
 
         return Data;
     }
-    public static List<T> ReadListFromJSONString<T>(string jsonString) 
+    public static T[] ReadListFromJSONString<T>(string jsonString) 
     {
         if(string.IsNullOrEmpty(jsonString) || jsonString == "{}") 
         {
-            return new List<T>();
+            return new T[0];
         }
 
-        List<T> Data = JsonHelper.FromJson<T>(jsonString).ToList();
+        T[] Data = JsonHelper.FromJson<T>(jsonString);
 
         return Data;
     }
@@ -53,9 +53,9 @@ public static class JsonHelper
             }
         } else return String.Empty;
     }
-    public static void SaveToJSON<T>(List<T> Data, string path) 
+    public static void SaveToJSON<T>(T[] Data, string path) 
     {
-        string content = JsonHelper.ToJson<T>(Data.ToArray());
+        string content = JsonHelper.ToJson<T>(Data);
         File.WriteAllText(path, content);
         //WriteFile(path, content);
     }

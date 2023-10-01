@@ -20,7 +20,6 @@ public class EmployeeListItem : MonoBehaviour
     {
         get { return _rectTransform; }
     }
-    
     public Image Image
     {
         get { return _image; }
@@ -34,6 +33,8 @@ public class EmployeeListItem : MonoBehaviour
     public string Gender { get; private set; }
     public string Mail { get; private set; }
     public string Ip { get; private set; }
+
+    public int globalIndex { get; set; } = -1;
     public bool IsFavorite
     {
         get { return _isFavorite; }
@@ -66,11 +67,25 @@ public class EmployeeListItem : MonoBehaviour
     {
         FirstName = item.FirstName;
         SecondName = item.SecondName;
+        Gender = item.Gender;
         Mail = item.Mail;
         Ip = item.Ip;
         IsFavorite = item.IsFavorite;
 
         if(item.Image != null) _image.sprite = item.Image.sprite;
+        _name.text = $"{FirstName} {SecondName}";
+        _info.text = $"{Mail} <color=#D9D9D9>|</color> {Ip}";
+    }
+    public void Initialize(EmployeeData item, Sprite image)
+    {
+        FirstName = item.first_name;
+        SecondName = item.last_name;
+        Gender = item.gender;
+        Mail = item.email;
+        Ip = item.ip_address;
+        IsFavorite = item.isFavorite;
+
+        if(image != null) _image.sprite = image;
         _name.text = $"{FirstName} {SecondName}";
         _info.text = $"{Mail} <color=#D9D9D9>|</color> {Ip}";
     }
