@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
 using System.IO;
-using System.Linq;
-using TMPro;
-using UnityEditor;
 using UnityEngine;
 public class EmployeeListController : MonoBehaviour
 {
@@ -103,14 +97,6 @@ public class EmployeeListController : MonoBehaviour
     }
     private void UpdateEmployeeData()
     {
-        if(_employeeData is null) return;
-
-        // for (int i = 0; i < _employeeData.Length; i++)
-        // {
-        //     _employeeData[i].isFavorite = _employeeListItems[i].IsFavorite;
-        // }
-
-
         JsonHelper.SaveToJSON<EmployeeData>(_employeeData, 
         Application.persistentDataPath + "/" + EMPLOYEE_JSON_NAME + ".json");
     }
@@ -131,7 +117,7 @@ public class EmployeeListController : MonoBehaviour
             } else sprite = _employeeSprites[_employeeData[index].imageIndex];
         }
 
-        item.Initialize(data, sprite);
+        item.Initialize(data, sprite, (int index, bool status) => _employeeData[index].isFavorite = status);
         item.globalIndex = index;
     }
     private void OnApplicationPause(bool pauseStatus) 

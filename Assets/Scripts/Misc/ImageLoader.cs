@@ -55,7 +55,6 @@ public class ImageLoader : MonoBehaviour
     {
         UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
         yield return www.SendWebRequest();
-        yield return new WaitForSeconds(5f);
 
         if (www.result != UnityWebRequest.Result.Success) 
         {

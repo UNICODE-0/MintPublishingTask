@@ -10,11 +10,10 @@ public class EmployeeListItem : MonoBehaviour
     [SerializeField] private Image _favoriteIcon;
     [SerializeField] private Sprite _favoriteSprite;
     [SerializeField] private Sprite _unfavoriteSprite;
-    [SerializeField] private Image _padding;
-    [SerializeField] private Color _swapPaddingColor;
     [SerializeField] private RectTransform _rectTransform;
 
     private bool _isFavorite;
+    private Action<int, bool> OnFavoriteChange;
 
     public RectTransform RectTransform
     {
@@ -41,6 +40,7 @@ public class EmployeeListItem : MonoBehaviour
         private set 
         { 
             _isFavorite = value;
+
             if(value)
             {
                 _favoriteIcon.sprite = _favoriteSprite; 
@@ -50,7 +50,7 @@ public class EmployeeListItem : MonoBehaviour
             }
         }
     }
-    public void Initialize(Sprite image, string firstName, string secondName, string gender, string mail, string ip, bool isFavorite)
+    public void Initialize(Sprite image, string firstName, string secondName, string gender, string mail, string ip, bool isFavorite, Action<int, bool> onFavoriteChange)
     {
         FirstName = firstName;
         SecondName = secondName;
@@ -58,12 +58,13 @@ public class EmployeeListItem : MonoBehaviour
         Mail = mail;
         Ip = ip;
         IsFavorite = isFavorite;
+        OnFavoriteChange = onFavoriteChange;
 
         if(image != null) _image.sprite = image;
         _name.text = $"{FirstName} {SecondName}";
         _info.text = $"{Mail} <color=#D9D9D9>|</color> {Ip}";
     }
-    public void Initialize(EmployeeListItem item)
+    public void Initialize(EmployeeListItem item, Action<int, bool> onFavoriteChange)
     {
         FirstName = item.FirstName;
         SecondName = item.SecondName;
@@ -71,12 +72,13 @@ public class EmployeeListItem : MonoBehaviour
         Mail = item.Mail;
         Ip = item.Ip;
         IsFavorite = item.IsFavorite;
+        OnFavoriteChange = onFavoriteChange;
 
         if(item.Image != null) _image.sprite = item.Image.sprite;
         _name.text = $"{FirstName} {SecondName}";
         _info.text = $"{Mail} <color=#D9D9D9>|</color> {Ip}";
     }
-    public void Initialize(EmployeeData item, Sprite image)
+    public void Initialize(EmployeeData item, Sprite image, Action<int, bool> onFavoriteChange)
     {
         FirstName = item.first_name;
         SecondName = item.last_name;
@@ -84,19 +86,18 @@ public class EmployeeListItem : MonoBehaviour
         Mail = item.email;
         Ip = item.ip_address;
         IsFavorite = item.isFavorite;
+        OnFavoriteChange = onFavoriteChange;
 
         if(image != null) _image.sprite = image;
         _name.text = $"{FirstName} {SecondName}";
         _info.text = $"{Mail} <color=#D9D9D9>|</color> {Ip}";
     }
-    public void SwapPaddingColor()
-    {
-        _padding.color = _swapPaddingColor;
-    }
     public void ChangeFavoriteStatus()
     {
         if(IsFavorite) IsFavorite = false;
         else IsFavorite = true;
+
+        if(OnFavoriteChange is not null) OnFavoriteChange(globalIndex, IsFavorite);
     }
     public void OpenProfile()
     {
